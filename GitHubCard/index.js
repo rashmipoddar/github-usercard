@@ -2,16 +2,17 @@
           (replacing the palceholder with your Github name):
           https://api.github.com/users/<your name>
 */
-axios.get('https://api.github.com/users/rashmipoddar')
-  .then(response => {
-    console.log(`Response received from the api call: ${response}`);
-    console.log(response);
-    const githubUser = cardCreator(response.data);
-    cards.prepend(githubUser);
-  })
-  .catch(error => {
-    console.log(`Error when getting data from api call: ${error}`);
-  })
+// axios.get('https://api.github.com/users/rashmipoddar')
+//   .then(response => {
+//     // console.log(`Response received from the api call: ${response}`);
+//     console.log('Response received from the github api', response);
+//     console.log(response);
+//     const githubUser = cardCreator(response.data);
+//     cards.prepend(githubUser);
+//   })
+//   .catch(error => {
+//     console.log(`Error when getting data from api call: ${error}`);
+//   })
 
 /* Step 2: Inspect and study the data coming back, this is YOUR 
   github info! You will need to understand the structure of this 
@@ -38,20 +39,20 @@ const cards = document.querySelector('.cards');
           user, and adding that card to the DOM.
 */
 
-const followersArray = ['YenniLee', 'Gavin-Dreyer', 'Techne3', 'DannyManzietti', 'Developer3027'];
-const baseUrl = 'https://api.github.com/users/';
-followersArray.forEach(follower => {
-  axios.get(`${baseUrl}${follower}`)
-  .then(response => {
-    console.log(`Response received from the api call: ${response}`);
-    console.log(response);
-    const githubUser = cardCreator(response.data);
-    cards.appendChild(githubUser);
-  })
-  .catch(error => {
-    console.log(`Error when getting data from api call: ${error}`);
-  })
-})
+// const followersArray = ['YenniLee', 'Gavin-Dreyer', 'Techne3', 'DannyManzietti', 'Developer3027'];
+// const baseUrl = 'https://api.github.com/users/';
+// followersArray.forEach(follower => {
+//   axios.get(`${baseUrl}${follower}`)
+//   .then(response => {
+//     // console.log(`Response received from the api call: ${response}`);
+//     // console.log(response);
+//     const githubUser = cardCreator(response.data);
+//     cards.appendChild(githubUser);
+//   })
+//   .catch(error => {
+//     console.log(`Error when getting data from api call: ${error}`);
+//   })
+// })
 
 
 
@@ -133,3 +134,38 @@ function cardCreator(dataObj) {
   luishrd
   bigknell
 */
+
+
+// Stretch Goal
+
+axios.get('https://api.github.com/users/rashmipoddar')
+  .then(response => {
+    // console.log(`Response received from the api call: ${response}`);
+    // console.log('Response received from the github api', response);
+    // console.log(response);
+    const githubUser = cardCreator(response.data);
+    cards.prepend(githubUser);
+    const userFollowers = response.data.followers_url;
+    // console.log(`The followers url is ${userFollowers}`);
+    return userFollowers;
+  })
+  .then(userFollowers => {
+    axios.get(userFollowers)
+      .then(followersResponse => {
+        console.log(followersResponse);
+        let followersLink = followersResponse.data.map(followers => followers.url);
+        followersLink.forEach(followerLink => {
+          axios.get(`${followerLink}`)
+          .then(followerResponse => {
+            const follower = cardCreator(followerResponse.data);
+            cards.appendChild(follower);
+          })
+          .catch(error => {
+            console.log(`Error when getting data from user's follwers api call: ${error}`);
+          })
+        })
+      })
+  })
+  .catch(error => {
+    console.log(`Error when getting data from api call: ${error}`);
+  })
