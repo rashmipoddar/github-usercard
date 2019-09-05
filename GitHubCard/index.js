@@ -136,13 +136,13 @@ function cardCreator(dataObj) {
 */
 
 
-// Stretch Goal
+// Stretch Goal 1
 
 axios.get('https://api.github.com/users/rashmipoddar')
   .then(response => {
     // console.log(`Response received from the api call: ${response}`);
     // console.log('Response received from the github api', response);
-    // console.log(response);
+    console.log(response);
     const githubUser = cardCreator(response.data);
     cards.prepend(githubUser);
     const userFollowers = response.data.followers_url;
@@ -152,7 +152,7 @@ axios.get('https://api.github.com/users/rashmipoddar')
   .then(userFollowers => {
     axios.get(userFollowers)
       .then(followersResponse => {
-        console.log(followersResponse);
+        // console.log(followersResponse);
         let followersLink = followersResponse.data.map(followers => followers.url);
         followersLink.forEach(followerLink => {
           axios.get(`${followerLink}`)
@@ -169,3 +169,28 @@ axios.get('https://api.github.com/users/rashmipoddar')
   .catch(error => {
     console.log(`Error when getting data from api call: ${error}`);
   })
+
+
+//  Stretch goal 2
+
+const container = document.querySelector('.container');
+
+const contributions = document.createElement('div');
+contributions.style.background = 'white';
+contributions.style.border = '1px solid black';
+contributions.style.width = '740px';
+contributions.style.padding = '10px';
+container.appendChild(contributions);
+
+const img = document.createElement('img');
+img.src = "http://ghchart.rshah.org/409ba5/rashmipoddar";
+img.alt="Rashmi Poddar's Github chart";
+contributions.appendChild(img);
+
+// axios.get('https://github.com/users/rashmipoddar/contributions')
+//   .then(response => {
+//     console.log(response);
+//   })
+//   .catch(error => {
+//     console.log(error);
+//   })
